@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Class TaskController
@@ -11,99 +12,50 @@ use Illuminate\Http\Request;
  */
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function fetchAll()
     {
-        $tasks = Task::paginate();
+        $tasks = Task::all();
 
-        return view('task.index', compact('tasks'))
-            ->with('i', (request()->input('page', 1) - 1) * $tasks->perPage());
+        return json_encode($tasks);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $task = new Task();
-        return view('task.create', compact('task'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function save(Request $request)
     {
         request()->validate(Task::$rules);
 
         $task = Task::create($request->all());
 
-        return redirect()->route('tasks.index')
-            ->with('success', 'Task created successfully.');
+        return json_encode($task);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function fetchById($id)
     {
         $task = Task::find($id);
 
-        return view('task.show', compact('task'));
+        return json_encode($task);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update($id, Request $request)
+    {
+
+        $task = Task::find($id);
+
+        if ($task === null) {
+            return response(
+                "Task {$request->id} not found",
+                Response::HTTP_NOT_FOUND
+            );
+        }
+
+        return json_encode($task);
+    }
+
+    public function delete($id)
     {
         $task = Task::find($id);
 
-        return view('task.edit', compact('task'));
-    }
+        $task->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Task $task
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Task $task)
-    {
-        request()->validate(Task::$rules);
-
-        $task->update($request->all());
-
-        return redirect()->route('tasks.index')
-            ->with('success', 'Task updated successfully');
-    }
-
-    /**
-     * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Exception
-     */
-    public function destroy($id)
-    {
-        $task = Task::find($id)->delete();
-
-        return redirect()->route('tasks.index')
-            ->with('success', 'Task deleted successfully');
+        return json_encode($task);
     }
 }
