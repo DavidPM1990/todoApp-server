@@ -22,25 +22,22 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Task extends Model
 {
-    
-    static $rules = [
-		'name' => 'required',
-		'description' => 'required',
-		'start_date' => 'required',
-		'end_date' => 'required',
-		'priority' => 'required',
-		'status' => 'required',
-    ];
 
-    protected $perPage = 20;
+  static $rules = [
+    'name' => 'required',
+    'description' => 'required',
+    'start_date' => 'required',
+    'end_date' => 'required',
+    'priority' => 'required',
+    'status' => 'required',
+  ];
 
-    /**
-     * Attributes that should be mass-assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['name','description','start_date','end_date','priority','status'];
+  protected $perPage = 20;
 
-
-
+  /**
+   * Attributes that should be mass-assignable.
+   *
+   * @var array
+   */
+  protected $fillable = ['name', 'description', 'start_date', 'end_date', 'priority', 'status'];
 }
